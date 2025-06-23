@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Song to QR</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 Song QR Generator</h1>
+    <form id="qrForm">
+      <input type="text" id="songInput" placeholder="Enter a song name..." required />
+      <button type="submit">Generate QR</button>
+    </form>
+    <div id="result" class="hidden">
+      <!-- <p>🔗 <a id="ytLink" href="" target="_blank">YouTube Link</a></p> -->
+      <img id="qrImage" alt="QR Code" />
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

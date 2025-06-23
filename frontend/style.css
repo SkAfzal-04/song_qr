@@ -1,0 +1,83 @@
+/* General Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Page Styling */
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7fa;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Container Styling */
+.container {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Heading */
+.container h1 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* Input Field */
+input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Button */
+button {
+  padding: 14px;
+  width: 100%;
+  background-color: #0088ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #005fcc;
+}
+
+/* QR Image */
+#qrImage {
+  margin-top: 20px;
+  width: 180px;
+  max-width: 100%;
+}
+
+/* Hidden class */
+.hidden {
+  display: none;
+}
+
+/* YouTube Link Styling */
+#ytLink {
+  display: block;
+  margin-top: 16px;
+  word-break: break-all;
+  color: #0066cc;
+  font-size: 0.95rem;
+}

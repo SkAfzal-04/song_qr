@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Play Song</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .buttons button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .play { background: #28a745; color: white; }
+    .yt { background: #ff0000; color: white; }
+    iframe {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+      height: 315px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎵 How would you like to play this song?</h2>
+  <div class="buttons">
+    <button class="play">▶️ Play in Browser</button>
+    <button class="yt">🔗 Open in YouTube</button>
+  </div>
+
+  <div id="player" style="display: none;">
+    <iframe id="ytPlayer" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const songURL = params.get('song');
+    const videoId = songURL?.split('v=')[1];
+
+    document.querySelector('.play').addEventListener('click', () => {
+      if (!videoId) return alert("Invalid song URL");
+      document.getElementById('player').style.display = 'block';
+      document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    });
+
+    document.querySelector('.yt').addEventListener('click', () => {
+      if (!songURL) return alert("Invalid song URL");
+      window.location.href = songURL;
+    });
+  </script>
+</body>
+</html>
