@@ -6,13 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
+      padding: 30px;
       text-align: center;
-      padding: 40px;
+      background: #f7f9fc;
     }
+
     h2 {
       margin-bottom: 20px;
     }
+
     .buttons button {
       margin: 10px;
       padding: 12px 20px;
@@ -20,42 +23,152 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      transition: 0.2s ease-in-out;
     }
-    .play { background: #28a745; color: white; }
-    .yt { background: #ff0000; color: white; }
-    iframe {
+
+    .audioBtn { background: #28a745; color: white; }
+    .videoBtn { background: #007bff; color: white; }
+    .ytBtn    { background: #ff0000; color: white; }
+
+    .controls {
       margin-top: 20px;
-      width: 90%;
-      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #progress {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    #videoPlayer,
+    #hiddenPlayer {
+      margin-top: 20px;
+    }
+
+    #hiddenPlayer {
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    iframe {
+      width: 100%;
+      max-width: 560px;
       height: 315px;
+      border: none;
     }
   </style>
 </head>
 <body>
   <h2>🎵 How would you like to play this song?</h2>
   <div class="buttons">
-    <button class="play">▶️ Play in Browser</button>
-    <button class="yt">🔗 Open in YouTube</button>
+    <button class="audioBtn">🔊 Play Audio Here</button>
+    <button class="videoBtn">📺 Play Video Here</button>
+    <button class="ytBtn">🔗 Open in YouTube</button>
   </div>
 
-  <div id="player" style="display: none;">
-    <iframe id="ytPlayer" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+  <!-- Hidden audio player + controls -->
+  <div class="controls" id="audioControls" style="display: none;">
+    <button id="playPauseBtn">▶️ Play</button>
+    <input type="range" id="progress" value="0" min="0" max="100" />
   </div>
+
+  <!-- Visible video player -->
+  <div id="videoPlayer" style="display: none;">
+    <iframe id="ytIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+
+  <!-- Hidden YouTube player for audio mode -->
+  <div id="hiddenPlayer"></div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const songURL = params.get('song');
     const videoId = songURL?.split('v=')[1];
 
-    document.querySelector('.play').addEventListener('click', () => {
-      if (!videoId) return alert("Invalid song URL");
-      document.getElementById('player').style.display = 'block';
-      document.getElementById('ytPlayer').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    let player;
+    let isPlaying = false;
+    let duration = 0;
+    let interval;
+
+    // Load YouTube Iframe API
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = () => {
+      player = new YT.Player('hiddenPlayer', {
+        height: '0',
+        width: '0',
+        videoId: videoId,
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        },
+        playerVars: {
+          controls: 0,
+          modestbranding: 1
+        }
+      });
+    };
+
+    function onPlayerReady(event) {
+      duration = event.target.getDuration();
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        isPlaying = true;
+        document.getElementById('playPauseBtn').textContent = '⏸️ Pause';
+        interval = setInterval(updateProgress, 500);
+      } else {
+        isPlaying = false;
+        document.getElementById('playPauseBtn').textContent = '▶️ Play';
+        clearInterval(interval);
+      }
+    }
+
+    function updateProgress() {
+      if (!player || !duration) return;
+      const current = player.getCurrentTime();
+      const percent = (current / duration) * 100;
+      document.getElementById('progress').value = percent;
+    }
+
+    document.querySelector('.audioBtn').addEventListener('click', () => {
+      document.getElementById('audioControls').style.display = 'flex';
+      document.getElementById('videoPlayer').style.display = 'none';
+      player.playVideo();
     });
 
-    document.querySelector('.yt').addEventListener('click', () => {
-      if (!songURL) return alert("Invalid song URL");
-      window.location.href = songURL;
+    document.querySelector('.videoBtn').addEventListener('click', () => {
+      document.getElementById('audioControls').style.display = 'none';
+      document.getElementById('videoPlayer').style.display = 'block';
+      document.getElementById('ytIframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    });
+
+    document.querySelector('.ytBtn').addEventListener('click', () => {
+      if (songURL) window.location.href = songURL;
+    });
+
+    document.getElementById('playPauseBtn').addEventListener('click', () => {
+      if (!player) return;
+      if (isPlaying) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
+      }
+    });
+
+    document.getElementById('progress').addEventListener('input', (e) => {
+      if (player && duration) {
+        const seekTime = (e.target.value / 100) * duration;
+        player.seekTo(seekTime, true);
+      }
     });
   </script>
 </body>

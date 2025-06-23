@@ -48,12 +48,13 @@ app.post('/generate-qr', async (req, res) => {
     const videoId = firstVideo.video.videoId;
     const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
 
-    const redirectLink = `https://song-qr.vercel.app//play.html?song=${encodeURIComponent(youtubeLink)}`;
+    const redirectLink = `https://song-qr.vercel.app/play.html?song=${encodeURIComponent(youtubeLink)}`;
+    // const redirectLink = `http://localhost:5000/play.html?song=${encodeURIComponent(youtubeLink)}`;
     const qrCodeDataURL = await QRCode.toDataURL(redirectLink);
-    console.log(redirectLink)
 
     return res.json({
       youtubeLink,
+      redirectLink,
       qrCode: qrCodeDataURL,
     });
   } catch (err) {

@@ -16,10 +16,11 @@ document.getElementById('qrForm').addEventListener('submit', async (e) => {
     });
 
     const data = await res.json();
-
+    // console.log(data);
     if (data.qrCode) {
-    //   ytLink.href = data.youtubeLink;
-    //   ytLink.textContent = data.youtubeLink;
+    ytLink.href = data.redirectLink;
+    ytLink.textContent = data.redirectLink;
+
       qrImage.src = data.qrCode;
       resultDiv.classList.remove('hidden');
     } else {
